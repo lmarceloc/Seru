@@ -3,1351 +3,925 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Pina Beauty Concept - Atelier de Beleza em Ponta Grossa" />
-  <meta name="theme-color" content="#1a0f0a" />
-  <title>Pina Beauty Concept | Atelier de Beleza</title>
+  <meta name="description" content="Seru Cabeleireiros - Ponta Grossa, PR" />
+  <meta name="theme-color" content="#2b1e12" />
+  <title>Seru Cabeleireiros | Ponta Grossa</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Italiana&family=Cinzel:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600&family=Cinzel:wght@300;400&display=swap" rel="stylesheet" />
 
   <style>
-    * {
-      box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --noir: #2b1e12;
+      --noir2: #201610;
+      --cream: #ede9df;
+      --gold: #b8865a;
+      --gold2: #c9a070;
+      --border: rgba(184,134,90,0.20);
+      --t-dark: #ede9df;
+      --t-muted: rgba(237,233,223,0.45);
+      --t-light: #2b1e12;
+      --t-muted-l: rgba(43,30,18,0.50);
     }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #1a0f0a;
-      color: #F4EDE4;
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--noir);
+      color: var(--t-dark);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
       -webkit-font-smoothing: antialiased;
-      font-family: 'DM Sans', sans-serif;
-      line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    html {
-      scroll-behavior: smooth;
+    /* grain */
+    .grain {
+      position: fixed; inset: 0; z-index: 9990;
+      pointer-events: none; opacity: 0.038;
     }
 
-    /* Reveal animation */
-    [data-reveal] {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 1300ms cubic-bezier(.2,.8,.2,1), transform 1300ms cubic-bezier(.2,.8,.2,1);
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #160f08; }
+    ::-webkit-scrollbar-thumb { background: rgba(184,134,90,0.35); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,90,0.65); }
+
+    /* cursor */
+    @media (pointer: fine) { html, a, button { cursor: none; } }
+    .c-dot, .c-ring { display: none; }
+    @media (pointer: fine) {
+      .c-dot {
+        display: block; position: fixed; width: 6px; height: 6px;
+        background: var(--gold); border-radius: 50%;
+        pointer-events: none; z-index: 99999;
+        transform: translate(-50%,-50%);
+      }
+      .c-ring {
+        display: block; position: fixed; width: 34px; height: 34px;
+        border: 1px solid var(--gold); border-radius: 50%;
+        pointer-events: none; z-index: 99998;
+        transform: translate(-50%,-50%);
+        transition: width .32s, height .32s, opacity .32s;
+        opacity: .45;
+      }
+      .c-ring.hov { width: 54px; height: 54px; opacity: .22; }
     }
 
-    [data-reveal][data-revealed="true"] {
-      opacity: 1;
-      transform: translateY(0);
+    /* loader */
+    #loader {
+      position: fixed; inset: 0; z-index: 99997;
+      background: var(--cream);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      transition: opacity .7s ease, transform .7s ease;
     }
+    #loader.out { opacity: 0; pointer-events: none; transform: scale(1.04); }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
+    .loader-img {
+      width: 120px; height: 120px; object-fit: contain;
+      animation: fadeUp 1s cubic-bezier(.4,0,.2,1) forwards; opacity: 0;
     }
-
-    ::-webkit-scrollbar-track {
-      background: #14090a;
+    .loader-line {
+      height: 1px; background: var(--gold);
+      animation: growLine .8s cubic-bezier(.4,0,.2,1) .55s forwards; width: 0;
     }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(212,165,116,0.4);
-      border-radius: 4px;
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(10px) scale(.94); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
     }
+    @keyframes growLine { to { width: 110px; } }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(212,165,116,0.7);
+    /* reveal */
+    [data-r] {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1);
     }
+    [data-r][data-on] { opacity: 1; transform: none; }
+    [data-r][data-d="1"] { transition-delay: .1s; }
+    [data-r][data-d="2"] { transition-delay: .22s; }
+    [data-r][data-d="3"] { transition-delay: .38s; }
+    [data-r][data-d="4"] { transition-delay: .54s; }
+    [data-r][data-d="5"] { transition-delay: .7s; }
 
-    /* Navigation */
+    /* nav */
     nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      padding: 32px 56px;
-      transition: all 500ms cubic-bezier(.2,.8,.2,1);
-      background: transparent;
-      backdrop-filter: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #F4EDE4;
-    }
-
-    nav.scrolled {
-      padding: 14px 56px;
-      background: rgba(244,237,228,0.92);
-      backdrop-filter: blur(20px);
-      color: #1a0f0a;
-    }
-
-    .pina-logo {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      line-height: 1;
-      color: currentColor;
-    }
-
-    .pina-logo-main {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      font-size: 44px;
-      padding-left: 0.18em;
-    }
-
-    nav.scrolled .pina-logo-main {
-      font-size: 22px;
-    }
-
-    .pina-logo-sub {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      letter-spacing: 0.4em;
-      font-size: 8px;
-      margin-top: 6px;
-      padding-left: 0.4em;
-      opacity: 0.85;
-    }
-
-    nav ul {
-      display: flex;
-      gap: 40px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      font-weight: 300;
-      text-transform: uppercase;
-    }
-
-    nav a {
-      color: inherit;
-      text-decoration: none;
-      position: relative;
-      padding-bottom: 4px;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      padding: 24px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: padding .4s, background .4s, border-color .4s;
       border-bottom: 1px solid transparent;
-      transition: border-color 300ms;
+    }
+    nav.sc {
+      padding: 13px 64px;
+      background: rgba(12,9,6,.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-color: var(--border);
     }
 
-    nav a:hover {
-      border-bottom-color: #B8895A;
+    .hero-top-logo {
+      position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 10;
+    }
+    .hero-logo {
+      height: 216px; width: auto; display: block;
+      filter: invert(1); mix-blend-mode: screen;
     }
 
-    .nav-reserve {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 16px;
-      font-style: italic;
-      font-weight: 400;
-      color: inherit;
+    nav ul { list-style: none; display: flex; gap: 40px; }
+    nav ul a {
+      font-size: 10px; font-weight: 500; letter-spacing: .22em;
+      text-transform: uppercase; color: var(--t-muted);
+      text-decoration: none; transition: color .25s; position: relative;
+    }
+    nav ul a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 1px; background: var(--gold);
+      transform: scaleX(0); transform-origin: right;
+      transition: transform .3s ease;
+    }
+    nav ul a:hover { color: var(--t-dark); }
+    nav ul a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    .n-cta {
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold);
+      border: 1px solid var(--gold); padding: 10px 22px;
       text-decoration: none;
-      border-bottom: 1px solid currentColor;
-      padding-bottom: 2px;
-      transition: opacity 300ms;
+      transition: background .3s, color .3s;
     }
+    .n-cta:hover { background: var(--gold); color: var(--noir); }
 
-    .nav-reserve:hover {
-      opacity: 0.8;
-    }
-
-    /* Hero Section */
+    /* hero */
     .hero {
-      min-height: 100vh;
-      position: relative;
+      min-height: 100vh; position: relative;
+      display: flex; flex-direction: column; justify-content: flex-end;
       overflow: hidden;
-      background: radial-gradient(ellipse at 70% 40%, #2a1a10 0%, #14090a 70%);
-      color: #F4EDE4;
+      background:
+        radial-gradient(ellipse 70% 55% at 65% 28%, #241608 0%, transparent 58%),
+        radial-gradient(ellipse 50% 65% at 18% 72%, #1a0e06 0%, transparent 55%),
+        var(--noir);
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 88px, rgba(196,144,90,.012) 88px, rgba(196,144,90,.012) 89px),
+        repeating-linear-gradient(90deg, transparent, transparent 130px, rgba(196,144,90,.012) 130px, rgba(196,144,90,.012) 131px);
     }
 
-    .hero::before {
-      content: 'Diva';
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .hero-word {
+      position: absolute; top: 50%; right: -3vw;
+      transform: translateY(-50%);
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(280px, 38vw, 560px);
-      color: rgba(184,137,90,0.06);
-      letter-spacing: -0.04em;
-      line-height: 1;
-      user-select: none;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 1;
+      font-size: clamp(200px, 30vw, 460px);
+      font-style: italic; color: transparent;
+      -webkit-text-stroke: 1px rgba(196,144,90,.065);
+      line-height: 1; user-select: none; pointer-events: none;
+      animation: wPulse 14s ease-in-out infinite alternate;
+    }
+    @keyframes wPulse {
+      from { -webkit-text-stroke: 1px rgba(196,144,90,.04); transform: translateY(-50%) translateX(0); }
+      to   { -webkit-text-stroke: 1px rgba(196,144,90,.11); transform: translateY(-50%) translateX(-10px); }
     }
 
     .hero-content {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 120px 56px 60px;
-      text-align: center;
+      position: relative; z-index: 2;
+      padding: 0 64px 76px; max-width: 900px;
     }
 
-    .hero-tag {
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      color: #B8895A;
-      margin-bottom: 56px;
-      font-weight: 300;
+    .eyebrow {
+      display: flex; align-items: center; gap: 20px;
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 400;
+      letter-spacing: .45em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 38px;
+    }
+    .eyebrow::before {
+      content: ''; display: block; width: 44px; height: 1px;
+      background: var(--gold); flex-shrink: 0;
     }
 
-    .hero h1 {
+    h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(64px, 9vw, 144px);
-      line-height: 0.95;
-      letter-spacing: -0.025em;
-      margin: 0 0 40px;
-      max-width: 1100px;
+      font-size: clamp(56px, 8.5vw, 118px);
+      font-weight: 400; line-height: .96;
+      letter-spacing: -.02em; color: var(--t-dark);
+      margin-bottom: 40px;
     }
-
-    .hero h1 em {
-      font-style: italic;
-      color: #D4A574;
-      font-weight: 300;
-    }
+    h1 em { font-style: italic; color: var(--gold2); }
 
     .hero-desc {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 17px;
-      line-height: 1.7;
-      max-width: 540px;
-      opacity: 0.75;
-      margin: 0 0 56px;
+      font-size: 15px; font-weight: 300; color: var(--t-muted);
+      max-width: 420px; line-height: 1.9; margin-bottom: 52px;
     }
 
-    .hero-buttons {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      margin-bottom: 96px;
+    .hero-acts {
+      display: flex; align-items: center; gap: 28px;
+      flex-wrap: wrap; margin-bottom: 72px;
     }
 
-    .btn {
-      padding: 20px 44px;
-      border-radius: 999px;
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      text-decoration: none;
-      font-weight: 400;
-      transition: all 400ms;
-      border: none;
-      cursor: pointer;
-      display: inline-block;
+    .btn-p {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: .22em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--noir); background: var(--gold);
+      padding: 18px 42px; display: inline-block;
+      position: relative; overflow: hidden;
+      transition: background .3s, transform .3s, box-shadow .3s;
     }
-
-    .btn-primary {
-      background: #F4EDE4;
-      color: #1a0f0a;
+    .btn-p::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: rgba(255,255,255,.15);
+      transition: left .4s ease; transform: skewX(-20deg);
     }
+    .btn-p:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(196,144,90,.28); }
+    .btn-p:hover::before { left: 120%; }
 
-    .btn-primary:hover {
-      background: #D4A574;
+    .btn-g {
+      font-size: 11px; font-weight: 400; letter-spacing: .14em;
+      color: var(--t-muted); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: color .3s;
     }
+    .btn-g::after { content: '↓'; transition: transform .3s; }
+    .btn-g:hover { color: var(--t-dark); }
+    .btn-g:hover::after { transform: translateY(4px); }
 
-    .btn-secondary {
-      color: #F4EDE4;
+    .h-stats { display: flex; gap: 56px; }
+    .stat { border-top: 1px solid var(--border); padding-top: 16px; }
+    .stat-n {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 18px;
-      border-bottom: 1px solid rgba(244,237,228,0.4);
-      padding: 4px 0;
-      padding-bottom: 4px;
+      font-size: 40px; font-weight: 400;
+      color: var(--t-dark); line-height: 1; letter-spacing: -.02em;
+    }
+    .stat-l {
+      font-family: 'Cinzel', serif; font-size: 8px; font-weight: 400;
+      letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-top: 6px;
     }
 
-    .btn-secondary:hover {
-      border-bottom-color: rgba(244,237,228,0.8);
+    /* marquee */
+    .mband {
+      position: relative; z-index: 2;
+      border-top: 1px solid var(--border);
+      padding: 12px 0; overflow: hidden;
+      background: rgba(196,144,90,.03);
     }
+    .mtrack {
+      display: flex; white-space: nowrap;
+      animation: mroll 32s linear infinite;
+    }
+    .mtrack:hover { animation-play-state: paused; }
+    .mi {
+      display: inline-flex; align-items: center; gap: 24px;
+      padding: 0 26px;
+      font-family: 'Cinzel', serif; font-size: 8px; font-weight: 400;
+      letter-spacing: .42em; text-transform: uppercase;
+      color: var(--gold); opacity: .65;
+    }
+    .mi::after { content: '✦'; font-size: 6px; }
+    @keyframes mroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    .hero-stats {
-      display: flex;
-      gap: 80px;
-      justify-content: center;
-      padding-top: 40px;
-      border-top: 1px solid rgba(184,137,90,0.25);
-    }
+    /* section base */
+    .sd { background: var(--noir2); color: var(--t-dark); }
+    .sl { background: var(--cream); color: var(--t-light); }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 128px 64px; }
 
-    .stat {
-      text-align: center;
+    .slabel {
+      display: flex; align-items: center; gap: 18px;
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 400;
+      letter-spacing: .45em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 48px;
     }
-
-    .stat-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 36px;
-      color: #D4A574;
+    .slabel::before {
+      content: ''; display: block; width: 34px; height: 1px;
+      background: var(--gold); flex-shrink: 0;
     }
-
-    .stat-label {
-      font-family: 'Jost', sans-serif;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      opacity: 0.6;
-      margin-top: 4px;
-    }
-
-    /* Sections */
-    section {
-      padding: 180px 56px;
-    }
-
-    section.light {
-      background: #F4EDE4;
-      color: #1a0f0a;
-    }
-
-    section.dark {
-      background: #1a0f0a;
-      color: #F4EDE4;
-    }
-
-    .section-container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .section-tag {
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      font-weight: 300;
-      margin-bottom: 32px;
-    }
-
-    .section-dark .section-tag {
-      color: #D4A574;
-    }
-
-    .section-light .section-tag {
-      color: #B8895A;
-    }
+    .slabel.center { justify-content: center; }
+    .slabel.center::before { display: none; }
 
     h2 {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(40px, 7vw, 112px);
-      line-height: 0.95;
-      letter-spacing: -0.03em;
-      margin: 0 0 40px;
+      font-size: clamp(40px, 5.5vw, 72px);
+      font-weight: 400; line-height: 1.06; letter-spacing: -.015em;
     }
+    h2 em { font-style: italic; }
 
-    h2 em {
-      font-style: italic;
-      font-weight: 300;
+    /* philosophy */
+    .phi-c { max-width: 800px; margin: 0 auto; text-align: center; }
+    .phi-rule {
+      width: 1px; height: 68px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      margin: 40px auto;
     }
-
-    .section-light h2 em {
-      color: #B8895A;
-    }
-
-    .section-dark h2 em {
-      color: #D4A574;
-    }
-
-    /* Philosophy Section */
-    .philosophy {
-      text-align: center;
-    }
-
-    .philosophy-text {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 18px;
-      line-height: 1.8;
-      max-width: 760px;
-      margin: 0 auto 56px;
-      color: #3a2a20;
-    }
-
-    .philosophy-quote {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .quote-line {
-      width: 32px;
-      height: 1px;
-      background: #B8895A;
-    }
-
-    .quote-author {
+    .phi-q {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 22px;
-      color: #B8895A;
+      font-size: clamp(26px, 3.5vw, 48px);
+      font-weight: 300; font-style: italic; line-height: 1.35;
+      color: var(--t-light);
+    }
+    .phi-q em { color: var(--gold); font-style: italic; }
+    .phi-t {
+      font-size: 15px; font-weight: 300; line-height: 1.95;
+      color: var(--t-muted-l); max-width: 560px; margin: 0 auto;
     }
 
-    /* Services Grid */
-    .services-grid {
+    /* services */
+    .svcs-wrap { position: relative; overflow: hidden; }
+    .svcs-bg {
+      position: absolute; top: -80px; right: -40px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(120px, 19vw, 280px);
+      font-style: italic; color: transparent;
+      -webkit-text-stroke: 1px rgba(196,144,90,.045);
+      line-height: 1; user-select: none; pointer-events: none;
+    }
+    .svcs-list { position: relative; z-index: 1; margin-top: 72px; }
+
+    .srow {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1px;
-      background: rgba(212,165,116,0.15);
+      grid-template-columns: 54px 1fr auto 30px;
+      align-items: center; gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(196,144,90,.1);
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
     }
-
-    .service-card {
-      background: #1a0f0a;
-      padding: 64px 40px;
-      transition: all 500ms;
-      cursor: pointer;
-      position: relative;
-      min-height: 350px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    .srow:first-child { border-top: 1px solid rgba(196,144,90,.1); }
+    .srow::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      height: 1px; width: 0; background: var(--gold);
+      transition: width .6s cubic-bezier(.4,0,.2,1);
     }
+    .srow:hover::after { width: 100%; }
+    .srow:hover .srow-name { color: var(--gold2); }
+    .srow:hover .srow-arr { transform: translateX(6px); opacity: 1; }
 
-    .service-card:hover {
-      background: #241510;
+    .srow-num {
+      font-family: 'Cinzel', serif; font-size: 10px; font-weight: 400;
+      letter-spacing: .2em; color: var(--gold); padding-left: 4px;
     }
-
-    .service-number {
+    .srow-main { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    .srow-name {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 14px;
-      color: #D4A574;
-      letter-spacing: 0.05em;
+      font-size: clamp(26px, 3.8vw, 48px); font-weight: 400;
+      color: var(--t-dark); transition: color .3s; line-height: 1;
     }
-
-    .service-name {
+    .srow-sub {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 56px;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
+      font-size: 17px; font-style: italic; color: var(--gold); font-weight: 300;
+    }
+    .srow-desc {
+      font-size: 12px; font-weight: 300; color: var(--t-muted);
+      text-align: right; max-width: 180px;
+    }
+    .srow-arr {
+      font-size: 20px; color: var(--gold);
+      opacity: .3; transition: transform .3s, opacity .3s;
     }
 
-    .service-subtitle {
+    .svc-sp {
+      margin-top: 56px; border: 1px solid var(--border);
+      padding: 48px 56px;
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+      position: relative; overflow: hidden;
+    }
+    .svc-sp::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    }
+    .svc-sp-title {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 32px;
-      color: #D4A574;
-      line-height: 1;
-      margin-bottom: 24px;
+      font-size: clamp(24px, 3vw, 40px); font-weight: 400;
+      color: var(--t-dark); line-height: 1.2;
     }
-
-    .service-desc {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      line-height: 1.7;
-      opacity: 0.7;
-      margin: 0;
+    .svc-sp-title em { font-style: italic; color: var(--gold); }
+    .svc-sp-txt {
+      font-size: 14px; font-weight: 300; color: var(--t-muted);
+      max-width: 320px; line-height: 1.8;
     }
-
-    .service-cta {
-      font-family: 'Jost', sans-serif;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #D4A574;
+    .btn-ol {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--gold); border: 1px solid var(--gold);
+      padding: 15px 32px; white-space: nowrap;
+      transition: background .3s, color .3s;
     }
+    .btn-ol:hover { background: var(--gold); color: var(--noir); }
 
-    .service-special {
-      background: linear-gradient(135deg, #D4A574 0%, #B8895A 100%);
-      color: #1a0f0a;
+    /* team */
+    .team-hd {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 56px; align-items: end; margin-bottom: 72px;
     }
-
-    .service-special-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 36px;
-      line-height: 1.2;
-      margin-bottom: 24px;
+    .team-txt {
+      font-size: 15px; font-weight: 300; line-height: 1.95;
+      color: var(--t-muted-l);
     }
-
-    .service-special-text {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      line-height: 1.7;
-      margin: 0 0 32px;
-    }
-
-    .service-special a {
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #1a0f0a;
-      text-decoration: none;
-      border-bottom: 1px solid #1a0f0a;
-      padding-bottom: 4px;
-      display: inline-block;
-    }
-
-    /* Team Section */
-    .team-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: end;
-      margin-bottom: 80px;
-    }
-
-    .team-header-text {
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      font-size: 17px;
-      line-height: 1.8;
-      color: #3a2a20;
-      margin: 0;
-      max-width: 480px;
-      justify-self: end;
-    }
-
     .team-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 20px;
     }
 
-    .team-member {
-      position: relative;
+    .tcard {
+      position: relative; aspect-ratio: 3/4;
+      background: linear-gradient(160deg, #1e1208, #0c0906);
+      overflow: hidden; transition: box-shadow .5s;
     }
+    .tcard:hover { box-shadow: 0 20px 60px rgba(196,144,90,.16); }
 
-    .team-photo {
-      aspect-ratio: 3/4;
-      background: repeating-linear-gradient(45deg, #e8dcc8 0 2px, #f0e6d4 2px 14px);
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-    }
-
-    .team-photo-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: rgba(26,15,10,0.35);
-      letter-spacing: 0.2em;
-    }
-
-    .team-photo-number {
-      position: absolute;
-      top: 16px;
-      left: 16px;
+    .tcard-init {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-52%);
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 14px;
-      color: #B8895A;
+      font-size: 180px; font-style: italic; color: transparent;
+      -webkit-text-stroke: 1px rgba(196,144,90,.1);
+      line-height: 1; pointer-events: none; user-select: none;
+      transition: -webkit-text-stroke .4s;
     }
+    .tcard:hover .tcard-init { -webkit-text-stroke: 1px rgba(196,144,90,.22); }
 
-    .team-name {
+    .tcard-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 32px 24px 24px;
+      background: linear-gradient(to top, rgba(12,9,6,.96) 0%, transparent 100%);
+    }
+    .tcard-name {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 28px;
-      line-height: 1.1;
-      margin-bottom: 6px;
+      font-size: 24px; font-weight: 400; color: var(--t-dark); letter-spacing: .02em;
     }
-
-    .team-role {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 16px;
-      color: #B8895A;
+    .tcard-role {
+      font-family: 'Cinzel', serif; font-size: 8px; font-weight: 400;
+      letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-top: 5px;
     }
-
-    /* Gallery Section */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+    .tcard-num {
+      position: absolute; top: 18px; right: 18px;
+      font-family: 'Cinzel', serif; font-size: 8px; font-weight: 400;
+      letter-spacing: .2em; color: var(--gold); opacity: .55;
+      background: rgba(12,9,6,.5); padding: 4px 8px;
     }
-
-    .gallery-item {
-      aspect-ratio: 1;
-      background: linear-gradient(135deg, #2a1a10 0%, #14090a 100%);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 500ms;
-      min-height: 350px;
-      width: 100%;
-    }
-
-    .gallery-item[data-tall] {
-      aspect-ratio: 3/4;
-      min-height: 480px;
-    }
-
-    .gallery-item[data-wide] {
-      aspect-ratio: 2/1;
-      grid-column: span 2;
-    }
-
-    .gallery-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: rgba(244,237,228,0.25);
-      letter-spacing: 0.2em;
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .gallery-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(212,165,116,0.92) 0%, rgba(184,137,90,0.92) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 500ms;
-      color: #1a0f0a;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 22px;
-    }
-
-    .gallery-item:hover .gallery-overlay {
-      opacity: 1;
-    }
-
-    .gallery-button {
-      text-align: center;
-      margin-top: 64px;
-    }
-
-    .btn-instagram {
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #D4A574;
-      text-decoration: none;
-      border: 1px solid #D4A574;
-      padding: 18px 40px;
-      border-radius: 999px;
-      display: inline-block;
-      transition: all 400ms;
-    }
-
-    .btn-instagram:hover {
-      background: #D4A574;
-      color: #1a0f0a;
-    }
-
-    /* Visit Section */
-    .visit-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-    }
-
-    .visit-info {
-      display: grid;
-      gap: 32px;
-      margin-bottom: 48px;
-    }
-
-    .info-group {
-      display: grid;
-      gap: 8px;
-    }
-
-    .info-label {
-      font-family: 'Jost', sans-serif;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #B8895A;
-      margin-bottom: 8px;
-      font-weight: 300;
-    }
-
-    .info-content {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 300;
-      line-height: 1.4;
-    }
-
-    .info-content em {
-      font-style: italic;
-      color: #B8895A;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .info-phone {
-      font-size: 22px;
-    }
-
-    .info-phone {
-      font-family: 'Jost', sans-serif;
-    }
-
-    .info-hours {
-      font-family: 'Jost', sans-serif;
-      font-size: 20px;
-    }
-
-    .btn-contact {
-      display: inline-flex;
-      align-items: center;
-      gap: 16px;
-      background: #1a0f0a;
-      color: #F4EDE4;
-      padding: 22px 44px;
-      border-radius: 999px;
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      text-decoration: none;
-      font-weight: 400;
-      transition: all 400ms;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-contact:hover {
-      background: #B8895A;
-    }
-
-    .visit-image {
-      aspect-ratio: 4/5;
-      background: linear-gradient(135deg, #e8dcc8 0%, #d4c4a8 100%);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .visit-image::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(45deg, transparent 0 24px, rgba(184,137,90,0.08) 24px 25px);
-    }
-
-    .visit-image-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: rgba(26,15,10,0.35);
-      letter-spacing: 0.2em;
-      position: relative;
-      z-index: 1;
-    }
-
-    .visit-quote {
-      position: absolute;
-      bottom: 24px;
-      left: 24px;
-      right: 24px;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 28px;
-      line-height: 1.3;
-      color: #1a0f0a;
-      z-index: 2;
-    }
-
-    .corner-deco {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border: 1px solid #B8895A;
+    /* subtle top glow per card */
+    .tcard::before {
+      content: ''; position: absolute; top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,144,90,.07) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    .corner-deco-tl {
-      top: -16px;
-      right: -16px;
+    /* gallery */
+    .gal-hd { text-align: center; margin-bottom: 64px; }
+    .gal-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .gal-item { overflow: hidden; display: flex; align-items: flex-start; }
+    .gal-item blockquote { margin: 0 !important; flex: 1; min-width: 0 !important; max-width: 100% !important; width: 100% !important; }
+    .gal-item iframe { width: 100% !important; }
+    .gal-cta { text-align: center; margin-top: 56px; }
+    .btn-ig {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 10px; font-weight: 600; letter-spacing: .25em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--gold); border: 1px solid var(--border);
+      padding: 16px 44px;
+      transition: background .3s, color .3s, border-color .3s;
     }
+    .btn-ig:hover { background: var(--gold); color: var(--noir); border-color: var(--gold); }
 
-    .corner-deco-bl {
-      bottom: -16px;
-      left: -16px;
+    /* visit */
+    .vis-grid {
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: 80px; align-items: start;
     }
+    .vis-group { margin-bottom: 36px; }
+    .vi-label {
+      font-family: 'Cinzel', serif; font-size: 8px; font-weight: 400;
+      letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    .vi-val { font-size: 15px; font-weight: 300; line-height: 1.78; color: var(--t-muted-l); }
+    .vi-val em { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--gold); font-size: 18px; }
+    .vi-val strong { font-weight: 500; color: var(--t-light); }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--noir); background: var(--gold);
+      padding: 18px 40px; margin-top: 12px;
+      transition: background .3s, transform .3s;
+    }
+    .btn-wa:hover { background: var(--gold2); transform: translateY(-2px); }
+    .vis-map { position: sticky; top: 100px; }
+    .vis-map iframe { width: 100%; height: 480px; border: 0; display: block; }
 
-    /* Footer */
+    /* footer */
     footer {
-      background: #14090a;
-      color: #F4EDE4;
-      padding: 100px 56px 40px;
+      background: #060402; border-top: 1px solid var(--border);
+      padding: 72px 64px 48px;
     }
-
-    .footer-container {
-      max-width: 1400px;
-      margin: 0 auto;
+    .ft-wrap { max-width: 1240px; margin: 0 auto; }
+    .ft-logo {
+      text-align: center; margin-bottom: 48px; padding-bottom: 48px;
+      border-bottom: 1px solid var(--border);
     }
-
-    .footer-top {
-      text-align: center;
-      padding-bottom: 80px;
-      border-bottom: 1px solid rgba(184,137,90,0.2);
+    .ft-logo img {
+      height: 76px; width: auto;
+      filter: invert(1); mix-blend-mode: screen; opacity: .65;
     }
-
-    .footer-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(40px, 5vw, 64px);
-      line-height: 1.2;
-      color: #D4A574;
-      margin-bottom: 32px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+    .ft-links {
+      display: flex; justify-content: center; gap: 48px; margin-bottom: 48px;
     }
-
-    .footer-bottom {
-      padding-top: 40px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      justify-content: space-between;
-      align-items: center;
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      opacity: 0.6;
-      font-weight: 300;
+    .ft-links a {
+      font-family: 'Cinzel', serif; font-size: 9px; font-weight: 400;
+      letter-spacing: .35em; text-transform: uppercase;
+      color: rgba(255,255,255,.55); text-decoration: none;
+      transition: color .3s;
     }
-
-    .footer-links {
-      display: flex;
-      gap: 32px;
-      flex-wrap: wrap;
+    .ft-links a:hover { color: #fff; }
+    .ft-bot {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; font-weight: 300; color: rgba(255,255,255,.45);
+      letter-spacing: .07em;
     }
+    .ft-bot a { color: rgba(255,255,255,.7); text-decoration: none; transition: color .3s; }
+    .ft-bot a:hover { color: #fff; }
 
-    .footer-links a {
-      color: #D4A574;
-      text-decoration: none;
+    /* float wa */
+    .fwa {
+      position: fixed; bottom: 32px; right: 32px; z-index: 500;
+      background: var(--gold); color: var(--noir); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 24px;
+      font-size: 9px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+      box-shadow: 0 8px 32px rgba(196,144,90,.32);
+      transition: background .3s, transform .3s, box-shadow .3s;
     }
+    .fwa:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 16px 48px rgba(196,144,90,.42); }
 
-    .footer-links a:hover {
-      text-decoration: underline;
+    /* responsive */
+    @media (max-width: 1024px) {
+      nav ul { display: none; }
+      nav { padding: 20px 36px; }
+      nav.sc { padding: 13px 36px; }
+      .wrap { padding: 96px 36px; }
+      .hero-content { padding: 0 36px 64px; }
+      .team-hd { grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .gal-grid { grid-template-columns: 1fr; }
+      .vis-grid { grid-template-columns: 1fr; gap: 48px; }
+      .vis-map { position: static; }
+      .svc-sp { flex-direction: column; text-align: center; }
+      .svc-sp::before { display: none; }
+      .ft-bot { flex-direction: column; gap: 16px; text-align: center; }
+      .ft-links { flex-wrap: wrap; gap: 24px; }
     }
-
-    /* Floating WhatsApp */
-    .floating-whatsapp {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 40;
-      padding: 16px 24px;
-      border-radius: 999px;
-      background: #1a0f0a;
-      color: #F4EDE4;
-      font-family: 'Jost', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      font-weight: 400;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 16px 40px rgba(26,15,10,0.4);
-      border: 1px solid #B8895A;
-      transition: all 400ms;
-    }
-
-    .floating-whatsapp:hover {
-      background: #B8895A;
-      color: #1a0f0a;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      nav ul {
-        display: none;
-      }
-
-      nav {
-        padding: 16px 24px;
-      }
-
-      section {
-        padding: 96px 24px;
-      }
-
-      .hero-content {
-        padding: 80px 24px 40px;
-      }
-
-      .hero-buttons {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .hero-stats {
-        gap: 32px;
-      }
-
-      .team-header {
-        grid-template-columns: 1fr;
-        gap: 32px;
-        margin-bottom: 48px;
-      }
-
-      .team-header-text {
-        justify-self: auto;
-        max-width: 100%;
-      }
-
-      .team-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-      }
-
-      @media (max-width: 600px) {
-        .team-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .gallery-item[data-wide] {
-        grid-column: span 2;
-      }
-
-      .visit-container {
-        grid-template-columns: 1fr;
-        gap: 48px;
-      }
-
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .pina-logo-sub {
-        display: none;
-      }
-
-      .footer-bottom {
-        justify-content: center;
-        text-align: center;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hero-buttons {
-        flex-direction: column;
-      }
-
-      .hero-stats {
-        flex-wrap: wrap;
-        gap: 24px;
-      }
-
-      .btn-instagram {
-        width: 100%;
-        text-align: center;
-      }
-
-      .footer-links {
-        justify-content: center;
-        width: 100%;
-      }
+    @media (max-width: 640px) {
+      nav { padding: 18px 24px; }
+      nav.sc { padding: 12px 24px; }
+      .wrap { padding: 80px 24px; }
+      .hero-content { padding: 0 24px 56px; }
+      .h-stats { gap: 28px; flex-wrap: wrap; }
+      .team-grid { grid-template-columns: 1fr; }
+      .srow-desc { display: none; }
+      .srow { grid-template-columns: 48px 1fr 24px; }
+      footer { padding: 56px 24px 36px; }
+      .fwa span { display: none; }
+      .fwa { padding: 16px 18px; border-radius: 50%; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navigation -->
-  <nav id="nav">
-    <div class="pina-logo">
-      <div class="pina-logo-main">PINA</div>
-      <div class="pina-logo-sub">BEAUTY CONCEPT</div>
-    </div>
-    <ul>
-      <li><a href="#filosofia">Filosofia</a></li>
-      <li><a href="#atelier">Atelier</a></li>
-      <li><a href="#equipe">Equipe</a></li>
-      <li><a href="#galeria">Galeria</a></li>
-      <li><a href="#visita">Visite-nos</a></li>
-    </ul>
-    <a href="https://wa.me/5542998144294" class="nav-reserve" target="_blank" rel="noreferrer">Reservar — WhatsApp</a>
-  </nav>
+<!-- grain -->
+<svg class="grain" aria-hidden="true">
+  <filter id="fn">
+    <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="4" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#fn)"/>
+</svg>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-content">
-      <div data-reveal class="hero-tag">✦ &nbsp; Beauty Atelier · Ponta Grossa &nbsp; ✦</div>
-      <h1 data-reveal>
-        Onde mulheres<br/>
-        se tornam<br/>
-        <em>obras-primas.</em>
-      </h1>
-      <p data-reveal class="hero-desc">
-        Um atelier de beleza dedicado à arte de revelar a sua versão mais luminosa. Cada serviço, uma assinatura.
+<!-- cursor -->
+<div class="c-dot" id="cDot"></div>
+<div class="c-ring" id="cRing"></div>
+
+<!-- loader -->
+<div id="loader">
+  <img src="img/seru_logo-bg.png" alt="Seru Cabeleireiros" class="loader-img" />
+  <div class="loader-line"></div>
+</div>
+
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-top-logo">
+    <img src="img/seru_logo-bg.png" alt="Seru Cabeleireiros" class="hero-logo" />
+  </div>
+
+  <div class="hero-word" aria-hidden="true">Seru</div>
+
+  <div class="hero-content">
+
+    <h1 data-r data-d="1">
+      Onde cada fio<br/>
+      se torna<br/>
+      <em>obra de arte.</em>
+    </h1>
+
+    <p data-r data-d="2" class="hero-desc">
+      Um espaço dedicado à arte de transformar — cortes, colorações e tratamentos que revelam a sua versão mais confiante.
+    </p>
+
+    <div data-r data-d="3" class="hero-acts">
+      <a href="https://wa.me/5542998144294" class="btn-p" target="_blank" rel="noreferrer">Agendar agora</a>
+      <a href="#filosofia" class="btn-g">Conhecer o espaço</a>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- philosophy -->
+<section id="filosofia" class="sl">
+  <div class="wrap">
+    <div class="phi-c">
+      <div data-r class="slabel center">Filosofia</div>
+      <div data-r data-d="1" class="phi-rule"></div>
+      <blockquote data-r data-d="2" class="phi-q">
+        O cabelo, para nós, é o <em>cuidado</em><br/>
+        que se transforma em <em>confiança</em>.
+      </blockquote>
+      <div data-r data-d="3" class="phi-rule"></div>
+      <p data-r data-d="4" class="phi-t">
+        O Seru Cabeleireiros é um espaço dedicado à arte de transformar — não apenas pelo corte preciso, mas pelo olhar atento, pelo cuidado com cada detalhe, pelo desejo genuíno de ver cada cliente sair daqui mais confiante, mais bonito, mais si mesmo.
       </p>
-      <div data-reveal class="hero-buttons">
-        <a href="https://wa.me/5542998144294" class="btn btn-primary" target="_blank" rel="noreferrer">Reserve sua experiência</a>
-        <a href="#filosofia" class="btn btn-secondary">conhecer o atelier</a>
-      </div>
-
-      <div data-reveal class="hero-stats">
-        <div class="stat">
-          <div class="stat-number">10+</div>
-          <div class="stat-label">Anos</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">2.6k</div>
-          <div class="stat-label">Clientes</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">5★</div>
-          <div class="stat-label">Avaliação</div>
-        </div>
-      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Philosophy -->
-  <section id="filosofia" class="light">
-    <div class="section-container philosophy">
-      <div data-reveal class="section-tag">— Filosofia</div>
-      <h2 data-reveal>
-        A beleza, para nós, é o <em>cuidado</em><br/>
-        que se transforma em <em>presença</em>.
+<!-- services -->
+<section id="servicos" class="sd">
+  <div class="wrap">
+    <div class="svcs-wrap">
+      <div class="svcs-bg" aria-hidden="true">Arte</div>
+
+      <div data-r class="slabel">Serviços</div>
+      <h2 data-r data-d="1" style="color:var(--t-dark);">
+        O que fazemos<br/><em>com maestria</em>
       </h2>
-      <p data-reveal class="philosophy-text">
-        O Pina Beauty Concept é um atelier dedicado à arte de embelezar — não apenas pela técnica, mas pelo olhar atento, pelo tempo dedicado, pelo desejo genuíno de ver cada mulher sair daqui mais segura, mais sua, mais diva.
-      </p>
-    </div>
-  </section>
 
-  <!-- Atelier / Services -->
-  <section id="atelier" class="dark">
-    <div class="section-container">
-      <div data-reveal style="text-align: center; margin-bottom: 100px;">
-        <div class="section-tag">— Atelier</div>
-        <h2>
-          Serviços<br/>
-        </h2>
+      <div class="svcs-list">
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="srow">
+          <span class="srow-num">01</span>
+          <div class="srow-main"><span class="srow-name">Cortes</span><span class="srow-sub">Femininos</span></div>
+          <span class="srow-desc">Do clássico ao contemporâneo.</span>
+          <span class="srow-arr">→</span>
+        </a>
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="srow">
+          <span class="srow-num">02</span>
+          <div class="srow-main"><span class="srow-name">Coloração</span><span class="srow-sub">Mechas &amp; Luzes</span></div>
+          <span class="srow-desc">Reflexos que revelam personalidade.</span>
+          <span class="srow-arr">→</span>
+        </a>
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="srow">
+          <span class="srow-num">03</span>
+          <div class="srow-main"><span class="srow-name">Manicure</span><span class="srow-sub">e Pedicure</span></div>
+          <span class="srow-desc">Cuidado completo para suas mãos e pés.</span>
+          <span class="srow-arr">→</span>
+        </a>
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="srow">
+          <span class="srow-num">04</span>
+          <div class="srow-main"><span class="srow-name">Escova</span><span class="srow-sub">Progressiva</span></div>
+          <span class="srow-desc">Fios lisos, brilhosos e sem frizz.</span>
+          <span class="srow-arr">→</span>
+        </a>
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="srow">
+          <span class="srow-num">05</span>
+          <div class="srow-main"><span class="srow-name">Maquiagem</span><span class="srow-sub">Artística</span></div>
+          <span class="srow-desc">Realce sua beleza para qualquer ocasião.</span>
+          <span class="srow-arr">→</span>
+        </a>
       </div>
 
-      <div class="services-grid">
-        <!-- Cortes -->
-        <div data-reveal class="service-card">
-          <div>
-            <div class="service-number">nº 01</div>
-            <div class="service-name">Cortes</div>
-            <div class="service-subtitle">Femininos</div>
-            <p class="service-desc">Cortes que dialogam com sua personalidade.</p>
-          </div>
-          <div class="service-cta">Ver detalhes →</div>
-        </div>
-
-        <!-- Maquiagem -->
-        <div data-reveal class="service-card">
-          <div>
-            <div class="service-number">nº 02</div>
-            <div class="service-name">Maquiagem</div>
-            <div class="service-subtitle">Couture</div>
-            <p class="service-desc">Make autoral para o seu momento mais importante.</p>
-          </div>
-          <div class="service-cta">Ver detalhes →</div>
-        </div>
-
-        <!-- Sobrancelhas -->
-        <div data-reveal class="service-card">
-          <div>
-            <div class="service-number">nº 03</div>
-            <div class="service-name">Sobrancelhas</div>
-            <div class="service-subtitle">Visagismo</div>
-            <p class="service-desc">Design que harmoniza o olhar.</p>
-          </div>
-          <div class="service-cta">Ver detalhes →</div>
-        </div>
-
-        <!-- Unhas -->
-        <div data-reveal class="service-card">
-          <div>
-            <div class="service-number">nº 04</div>
-            <div class="service-name">Unhas</div>
-            <div class="service-subtitle">Nail Art</div>
-            <p class="service-desc">Da clássica francesinha à arte autoral.</p>
-          </div>
-          <div class="service-cta">Ver detalhes →</div>
-        </div>
-
-        <!-- Cílios -->
-        <div data-reveal class="service-card">
-          <div>
-            <div class="service-number">nº 05</div>
-            <div class="service-name">Cílios</div>
-            <div class="service-subtitle">Volume Russo</div>
-            <p class="service-desc">Olhar marcante, sem peso.</p>
-          </div>
-          <div class="service-cta">Ver detalhes →</div>
-        </div>
-
-        <!-- Special Offer -->
-        <div data-reveal class="service-card service-special">
-          <div>
-            <div class="service-special-title">Algo<br/>mais especial?</div>
-            <p class="service-special-text">Day spa, dia da noiva, pacotes para eventos. Conte-nos sobre seu momento.</p>
-          </div>
-          <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer">Conversar →</a>
-        </div>
+      <div data-r class="svc-sp">
+        <div><div class="svc-sp-title">Algo <em>mais especial?</em></div></div>
+        <p class="svc-sp-txt">Dia da noiva, pacotes para eventos e tratamentos exclusivos. Conte-nos sobre o seu momento.</p>
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="btn-ol">Conversar →</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Team -->
-  <section id="equipe" class="light">
-    <div class="section-container">
-      <div data-reveal class="team-header">
-        <div>
-          <div class="section-tag">— Equipe</div>
-          <h2>
-            Profissionais<br/>
-            <em>apaixonadas.</em>
-          </h2>
-        </div>
-        <p class="team-header-text">
-          Cada uma especialista em sua arte, todas movidas pelo mesmo propósito: revelar a beleza única que existe em você.
-        </p>
+<!-- team -->
+
+<!-- gallery -->
+<section id="galeria" class="sd">
+  <div class="wrap">
+    <div data-r class="gal-hd">
+      <div class="slabel center">Transformações</div>
+      <h2 style="color:var(--t-dark);">Resultados que<br/><em>falam por si</em></h2>
+    </div>
+
+    <div class="gal-grid">
+      <div data-r class="gal-item">
+        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DXerHASgMWw/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DXerHASgMWw/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DXerHASgMWw/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Cilene santos (@ccilene.santos)</a></p></div></blockquote>
       </div>
 
-      <div class="team-grid">
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/hadassa.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 01</div>
-          </div>
-          <div class="team-name">Hadassa</div>
-          <div class="team-role">Especialista</div>
-        </div>
+      <div data-r data-d="1" class="gal-item">
+        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DP7VknrkdVR/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DP7VknrkdVR/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DP7VknrkdVR/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Renata (@renataagenaro)</a></p></div></blockquote>
+      </div>
 
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/Jessica.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 02</div>
-          </div>
-          <div class="team-name">Jéssica</div>
-          <div class="team-role">Especialista</div>
-        </div>
-
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/Leandro.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 03</div>
-          </div>
-          <div class="team-name">Leandro</div>
-          <div class="team-role">Especialista</div>
-        </div>
-
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/Monalisa.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 04</div>
-          </div>
-          <div class="team-name">Monalisa</div>
-          <div class="team-role">Especialista</div>
-        </div>
-
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/Julya.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 05</div>
-          </div>
-          <div class="team-name">Julya</div>
-          <div class="team-role">Especialista</div>
-        </div>
-
-        <div data-reveal class="team-member">
-          <div class="team-photo" style="background-image: url('img/Daiane.jpg'); background-size: cover; background-position: center;">
-            <div class="team-photo-number">nº 06</div>
-          </div>
-          <div class="team-name">Daiane</div>
-          <div class="team-role">Especialista</div>
-        </div>
-
+      <div data-r data-d="2" class="gal-item">
+        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DRe34G0jT8E/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DRe34G0jT8E/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DRe34G0jT8E/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Guilherme Wrobel (@guilhermewrobel)</a></p></div></blockquote>
       </div>
     </div>
-  </section>
 
-  <!-- Gallery -->
-  <section id="galeria" class="dark">
-    <div class="section-container">
-      <div data-reveal style="text-align: center; margin-bottom: 80px;">
-        <div class="section-tag">— @pinabeautyconcept</div>
-        <h2>
-          Diário<br/><em>visual</em>
-        </h2>
-      </div>
-
-      <div class="gallery-grid">
-        <div data-reveal class="gallery-item" data-tall><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DV_OCKUDeW6/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DV_OCKUDeW6/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-right: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg);"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DV_OCKUDeW6/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by PINA BEAUTY CONCEPT - salao de beleza Ponta Grossa (@pinabeautyconcept)</a></p></div></blockquote><script async src="//www.instagram.com/embed.js"></script></div>
-        <div data-reveal class="gallery-item" data-tall><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DV_Qkbaiqth/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DV_Qkbaiqth/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DV_Qkbaiqth/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by PINA BEAUTY CONCEPT - salao de beleza Ponta Grossa (@pinabeautyconcept)</a></p></div></blockquote><script async src="//www.instagram.com/embed.js"></script></div>
-        <div data-reveal class="gallery-item" data-tall><blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DVjCJf6ja0M/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DVjCJf6ja0M/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">Visualizza questo post su Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DVjCJf6ja0M/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">Un post condiviso da PINA BEAUTY CONCEPT - salao de beleza Ponta Grossa (@pinabeautyconcept)</a></p></div></blockquote><script async src="//www.instagram.com/embed.js"></script></div>
-      </div>
-
-      <div class="gallery-button">
-        <a href="https://www.instagram.com/pinabeautyconcept/" target="_blank" rel="noreferrer" class="btn-instagram">Seguir no Instagram</a>
-      </div>
+    <div data-r class="gal-cta">
+      <a href="https://www.instagram.com/serucabeleireiros/" target="_blank" rel="noreferrer" class="btn-ig">Ver mais no Instagram</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Visit -->
-  <section id="visita" class="light">
-    <div class="section-container visit-container">
-      <div data-reveal>
-        <div class="section-tag">— Visite-nos</div>
-        <h2>
-          Reserve um<br/>
-          <em>momento</em><br/>
-          só seu.
+<!-- visit -->
+<section id="visita" class="sl">
+  <div class="wrap">
+    <div class="vis-grid">
+      <div data-r>
+        <div class="slabel">Visite-nos</div>
+        <h2 style="color:var(--t-light); margin-bottom:56px;">
+          Reserve um<br/><em>momento</em><br/>só seu.
         </h2>
 
-        <div class="visit-info">
-          <div class="info-group">
-            <div class="info-label">Endereço</div>
-            <div class="info-content">
-              Rua Raul Pompeia, 31<br/>
-              <strong><em>Jardim Carvalho</em></strong> · Ponta Grossa, PR
-            </div>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-group">
-              <div class="info-label">Telefone</div>
-              <div class="info-content info-phone">
-                (42) 3323-4294<br/>(42) 99814-4294
-              </div>
-            </div>
-            <div class="info-group">
-              <div class="info-label">Funcionamento</div>
-              <div class="info-content info-hours">
-                Ter — Sex · <em>10h–18h</em><br/>
-                Sábado · <em>9h–18h</em>
-              </div>
-            </div>
+        <div class="vis-group">
+          <div class="vi-label">Endereço</div>
+          <div class="vi-val">
+            R. Comendador Miró, 328<br/>
+            <strong>Centro</strong> · Ponta Grossa, PR · 84010-160
           </div>
         </div>
 
-        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="btn-contact">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+        <div class="vis-group">
+          <div class="vi-label">Telefone</div>
+          <div class="vi-val">
+            (42) 3222-2357
+          </div>
+        </div>
+
+        <div class="vis-group">
+          <div class="vi-label">Funcionamento</div>
+          <div class="vi-val">
+            Terça — Sexta · <em>10h–18h</em><br/>
+            Sábado · <em>9h–18h</em>
+          </div>
+        </div>
+
+        <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="btn-wa">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
           Falar no WhatsApp
         </a>
       </div>
 
-      <div data-reveal style="width: 100%; border-radius: 3px; overflow: hidden;">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.8929234567!2d-50.15384!3d-25.0837406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e81b0573b133c5%3A0xc96aca95aacdbac!2sPina%20Concept%20Beauty!5e0!3m2!1spt-BR!2sbr!4v1234567890" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div data-r data-d="2" class="vis-map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3622.5!2d-50.1567581!3d-25.0917948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e81bfff81e0871%3A0xde7b844a6085ec92!2sSeru%20Cabeleireiros!5e0!3m2!1spt-BR!2sbr!4v1715000000000!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-top">
-      </div>
+<!-- footer -->
+<footer>
+  <div class="ft-wrap">
+    <div class="ft-logo">
+      <img src="img/seru_logo-bg.png" alt="Seru Cabeleireiros" />
+    </div>
 
-      <div class="footer-bottom">
-        <div>© 2026 · Pina Beauty Concept</div>
-        <div class="footer-links">
-          <a href="https://www.instagram.com/pinabeautyconcept/" target="_blank" rel="noreferrer">Instagram</a>
-          <a href="https://www.facebook.com/pinabeautconcep/" target="_blank" rel="noreferrer">Facebook</a>
-          <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer">WhatsApp</a>
-        </div>
-        <div>Ponta Grossa · PR</div>
-      </div>
+    <div class="ft-links">
+      <a href="https://www.instagram.com/serucabeleireiros/" target="_blank" rel="noreferrer">Instagram</a>
+      <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer">WhatsApp</a>
+      <a href="#filosofia">Filosofia</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#visita">Visite-nos</a>
+    </div>
 
-      <div style="text-align: center; padding-top: 40px; margin-top: 40px; border-top: 1px solid rgba(184,137,90,0.2);">
-        <p style="margin: 0; font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.2em; opacity: 0.6;">
-          Feito com
-          <svg class="pixel-heart" viewBox="0 0 7 6" role="img" aria-label="coração" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; width: 14px; height: 12px; vertical-align: middle; margin: 0 6px; fill: #FF0000;">
-            <rect x="1" y="0" width="2" height="1"/>
-            <rect x="4" y="0" width="2" height="1"/>
-            <rect x="0" y="1" width="7" height="1"/>
-            <rect x="0" y="2" width="7" height="1"/>
-            <rect x="1" y="3" width="5" height="1"/>
-            <rect x="2" y="4" width="3" height="1"/>
-            <rect x="3" y="5" width="1" height="1"/>
-          </svg>
-          por <a href="https://agenciabyte.com" target="_blank" rel="noopener" style="color: #D4A574; text-decoration: none; border-bottom: 1px solid #D4A574; padding-bottom: 2px;">Agência Byte</a>
-        </p>
+    <div class="ft-bot">
+      <div>© 2026 · Seru Cabeleireiros · Ponta Grossa, PR</div>
+      <div class="ft-credit">
+        Feito com
+        <svg viewBox="0 0 7 6" style="display:inline-block;width:13px;height:11px;vertical-align:middle;margin:0 5px;fill:#e53e3e" aria-hidden="true">
+          <rect x="1" y="0" width="2" height="1"/><rect x="4" y="0" width="2" height="1"/>
+          <rect x="0" y="1" width="7" height="1"/><rect x="0" y="2" width="7" height="1"/>
+          <rect x="1" y="3" width="5" height="1"/><rect x="2" y="4" width="3" height="1"/>
+          <rect x="3" y="5" width="1" height="1"/>
+        </svg>
+        por <a href="https://agenciabyte.com" target="_blank" rel="noopener">Agência Byte</a>
       </div>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <!-- Floating WhatsApp Button -->
-  <a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="floating-whatsapp">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
-    Reservar
-  </a>
+<!-- float whatsapp -->
+<a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="fwa">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+  <span>Agendar</span>
+</a>
 
-  <script>
-    // Scroll reveal animation
-    function setupRevealAnimations() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.setAttribute('data-revealed', 'true');
-            observer.unobserve(entry.target);
+<script async src="//www.instagram.com/embed.js"></script>
+
+<script>
+  /* loader */
+  (function() {
+    var loader = document.getElementById('loader');
+    var start = Date.now();
+    function hide() {
+      var elapsed = Date.now() - start;
+      var delay = Math.max(0, 1900 - elapsed);
+      setTimeout(function() { loader.classList.add('out'); }, delay);
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(hide);
+    } else {
+      window.addEventListener('load', hide);
+    }
+  })();
+
+  /* cursor */
+  (function() {
+    var dot = document.getElementById('cDot');
+    var ring = document.getElementById('cRing');
+    if (!dot || !ring) return;
+    var mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', function(e) {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+
+    function tick() {
+      rx += (mx - rx) * 0.11;
+      ry += (my - ry) * 0.11;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    document.querySelectorAll('a, button').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { ring.classList.add('hov'); });
+      el.addEventListener('mouseleave', function() { ring.classList.remove('hov'); });
+    });
+  })();
+
+  /* nav scroll */
+  (function() {
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function() {
+      nav.classList.toggle('sc', window.scrollY > 60);
+    }, { passive: true });
+  })();
+
+  /* reveal on scroll */
+  (function() {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.setAttribute('data-on', '');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('[data-r]').forEach(function(el) { obs.observe(el); });
+  })();
+
+  /* 3D tilt on team cards */
+  (function() {
+    document.querySelectorAll('.tcard').forEach(function(card) {
+      card.addEventListener('mousemove', function(e) {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transition = 'box-shadow .5s';
+        card.style.transform = 'perspective(900px) rotateY(' + (x * 12) + 'deg) rotateX(' + (-y * 12) + 'deg) scale(1.02)';
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transition = 'transform .5s ease, box-shadow .5s';
+        card.style.transform = 'perspective(900px) rotateY(0) rotateX(0) scale(1)';
+      });
+    });
+  })();
+
+  /* service row shimmer on hover — already CSS, just ensure srows are revealed */
+  (function() {
+    document.querySelectorAll('.srow').forEach(function(row) {
+      var obs2 = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.setAttribute('data-on', '');
+            obs2.unobserve(e.target);
           }
         });
-      }, { threshold: 0.12 });
-
-      document.querySelectorAll('[data-reveal]').forEach((el) => {
-        observer.observe(el);
-      });
-    }
-
-    // Navbar scroll effect
-    function setupNavbarScroll() {
-      const nav = document.getElementById('nav');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 80) {
-          nav.classList.add('scrolled');
-        } else {
-          nav.classList.remove('scrolled');
-        }
-      }, { passive: true });
-    }
-
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-      setupRevealAnimations();
-      setupNavbarScroll();
+      }, { threshold: 0.1 });
+      obs2.observe(row);
     });
-  </script>
+  })();
+</script>
 </body>
 </html>
