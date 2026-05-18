@@ -51,27 +51,6 @@
     ::-webkit-scrollbar-thumb { background: rgba(184,134,90,0.35); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,90,0.65); }
 
-    /* cursor */
-    @media (pointer: fine) { html, a, button { cursor: none; } }
-    .c-dot, .c-ring { display: none; }
-    @media (pointer: fine) {
-      .c-dot {
-        display: block; position: fixed; width: 6px; height: 6px;
-        background: var(--gold); border-radius: 50%;
-        pointer-events: none; z-index: 99999;
-        transform: translate(-50%,-50%);
-      }
-      .c-ring {
-        display: block; position: fixed; width: 34px; height: 34px;
-        border: 1px solid var(--gold); border-radius: 50%;
-        pointer-events: none; z-index: 99998;
-        transform: translate(-50%,-50%);
-        transition: width .32s, height .32s, opacity .32s;
-        opacity: .45;
-      }
-      .c-ring.hov { width: 54px; height: 54px; opacity: .22; }
-    }
-
     /* loader */
     #loader {
       position: fixed; inset: 0; z-index: 99997;
@@ -125,11 +104,12 @@
 
     .hero-top-logo {
       position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
-      z-index: 10;
+      z-index: 10; background: transparent; line-height: 0;
     }
     .hero-logo {
       height: 216px; width: auto; display: block;
-      filter: invert(1); mix-blend-mode: screen;
+      filter: invert(1);
+      mix-blend-mode: screen;
     }
 
     nav ul { list-style: none; display: flex; gap: 40px; }
@@ -161,17 +141,9 @@
       min-height: 100vh; position: relative;
       display: flex; flex-direction: column; justify-content: flex-end;
       overflow: hidden;
-      background:
-        radial-gradient(ellipse 70% 55% at 65% 28%, #241608 0%, transparent 58%),
-        radial-gradient(ellipse 50% 65% at 18% 72%, #1a0e06 0%, transparent 55%),
-        var(--noir);
+      background: #2b1e12;
     }
-    .hero::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background:
-        repeating-linear-gradient(0deg, transparent, transparent 88px, rgba(196,144,90,.012) 88px, rgba(196,144,90,.012) 89px),
-        repeating-linear-gradient(90deg, transparent, transparent 130px, rgba(196,144,90,.012) 130px, rgba(196,144,90,.012) 131px);
-    }
+    .hero::before { display: none; }
 
     .hero-word {
       position: absolute; top: 50%; right: -3vw;
@@ -539,9 +511,9 @@
     }
     .ft-links a:hover { color: #fff; }
     .ft-bot {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
       font-size: 10px; font-weight: 300; color: rgba(255,255,255,.45);
-      letter-spacing: .07em;
+      letter-spacing: .07em; text-align: center;
     }
     .ft-bot a { color: rgba(255,255,255,.7); text-decoration: none; transition: color .3s; }
     .ft-bot a:hover { color: #fff; }
@@ -549,14 +521,13 @@
     /* float wa */
     .fwa {
       position: fixed; bottom: 32px; right: 32px; z-index: 500;
-      background: var(--gold); color: var(--noir); text-decoration: none;
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 24px;
-      font-size: 9px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
-      box-shadow: 0 8px 32px rgba(196,144,90,.32);
-      transition: background .3s, transform .3s, box-shadow .3s;
+      background: #25d366; color: #fff; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px; border-radius: 50%;
+      box-shadow: 0 8px 32px rgba(37,211,102,.38);
+      transition: transform .3s, box-shadow .3s;
     }
-    .fwa:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 16px 48px rgba(196,144,90,.42); }
+    .fwa:hover { transform: translateY(-3px) scale(1.07); box-shadow: 0 16px 48px rgba(37,211,102,.48); }
 
     /* responsive */
     @media (max-width: 1024px) {
@@ -585,7 +556,7 @@
       .srow-desc { display: none; }
       .srow { grid-template-columns: 48px 1fr 24px; }
       footer { padding: 56px 24px 36px; }
-      .fwa span { display: none; }
+      .fwa { width: 50px; height: 50px; bottom: 24px; right: 24px; }
       .fwa { padding: 16px 18px; border-radius: 50%; }
     }
   </style>
@@ -593,17 +564,13 @@
 <body>
 
 <!-- grain -->
-<svg class="grain" aria-hidden="true">
-  <filter id="fn">
+<svg class="grain" aria-hidden="true" width="100%" height="100%">
+  <filter id="fn" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="4" stitchTiles="stitch"/>
     <feColorMatrix type="saturate" values="0"/>
   </filter>
   <rect width="100%" height="100%" filter="url(#fn)"/>
 </svg>
-
-<!-- cursor -->
-<div class="c-dot" id="cDot"></div>
-<div class="c-ring" id="cRing"></div>
 
 <!-- loader -->
 <div id="loader">
@@ -820,9 +787,8 @@
 </footer>
 
 <!-- float whatsapp -->
-<a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="fwa">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
-  <span>Agendar</span>
+<a href="https://wa.me/5542998144294" target="_blank" rel="noreferrer" class="fwa" aria-label="Falar no WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
 </a>
 
 <script async src="//www.instagram.com/embed.js"></script>
@@ -842,32 +808,6 @@
     } else {
       window.addEventListener('load', hide);
     }
-  })();
-
-  /* cursor */
-  (function() {
-    var dot = document.getElementById('cDot');
-    var ring = document.getElementById('cRing');
-    if (!dot || !ring) return;
-    var mx = 0, my = 0, rx = 0, ry = 0;
-
-    document.addEventListener('mousemove', function(e) {
-      mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-    });
-
-    function tick() {
-      rx += (mx - rx) * 0.11;
-      ry += (my - ry) * 0.11;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-      requestAnimationFrame(tick);
-    }
-    tick();
-
-    document.querySelectorAll('a, button').forEach(function(el) {
-      el.addEventListener('mouseenter', function() { ring.classList.add('hov'); });
-      el.addEventListener('mouseleave', function() { ring.classList.remove('hov'); });
-    });
   })();
 
   /* nav scroll */
